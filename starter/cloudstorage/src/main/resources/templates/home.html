@@ -10,6 +10,7 @@
     </head>
     <body class="p-3 mb-2 bg-light text-black">
         <div class="container">
+            <label th:text="${logInUserName}">user name</label>
             <div id="logoutDiv">
                 <form action="#" method="POST">
                     <button type="submit" class="btn btn-secondary float-right">Logout</button>
@@ -75,13 +76,13 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
+                                    <tr th:each="userNote : ${noteList}">
                                         <td>
-                                            <button type="button" class="btn btn-success">Edit</button>
-                                            <a class="btn btn-danger">Delete</a>
+                                            <button type="button" class="btn btn-success" id="edit-userNote-button" th:onclick="showNoteModal([[${userNote.getNoteId()}]], [[${userNote.getNoteTitle()}]], [[${userNote.getNoteDescription()}]])">Edit</button>
+                                            <a class="btn btn-danger" th:href="@{'userNote/delete/' + ${userNote.noteId}}">Delete</a>
                                         </td>
-                                        <th scope="row">Example Note Title</th>
-                                        <td>Example Note Description </td>
+                                        <th scope="row" th:text="${userNote.noteTitle}"></th>
+                                        <td th:text="${userNote.noteDescription}"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -97,7 +98,7 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="#" method="POST">
+                                        <form action="#" th:action="@{/userNote/add}" method="POST">
                                             <input type="hidden" name="noteId" id="note-id">
                                             <div class="form-group">
                                                 <label for="note-title" class="col-form-label">Title</label>
@@ -134,14 +135,14 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
+                                <tr th:each="userCredential : ${credentialList}">
                                     <td>
-                                        <button type="button" class="btn btn-success">Edit</button>
-                                        <a class="btn btn-danger">Delete</a>
+                                        <button type="button" class="btn btn-success" th:onclick="showCredentialModal([[${userCredential.getCredentialId()}]], [[${userCredential.getUrl()}]], [[${userCredential.getUserName()}]], [[${userCredential.getPassword()}]])">Edit</button>
+                                        <a class="btn btn-danger" th:href="@{'userCredential/delete/' + ${userCredential.credentialId}}">Delete</a>
                                     </td>
-                                    <th scope="row">Example Credential URL</th>
-                                    <td>Example Credential Username</td>
-                                    <td>Example Credential Password</td>
+                                    <th scope="row" th:text="${userCredential.url}">Example Credential URL</th>
+                                    <td th:text="${userCredential.userName}"> Example Credential Username</td>
+                                    <td th:text="${userCredential.password}"> Example Credential Password</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -157,7 +158,7 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="#" method="POST">
+                                        <form action="#" th:action="@{/userCredential/add}" method="POST">
                                             <input type="hidden" name="credentialId" id="credential-id">
                                             <div class="form-group">
                                                 <label for="credential-url" class="col-form-label">URL</label>
