@@ -25,7 +25,7 @@ public class HomeController {
 
     @GetMapping()
     public String homeView(Authentication authentication, Model model) {
-        Integer userId = userService.getUser(authentication.getName()).getUserId();
+        Integer userId = this.userService.getUserIdFromUserName(authentication.getName());
         model.addAttribute("logInUserName", "Logged in as: "+authentication.getName());
         model.addAttribute("noteList", this.noteService.getNoteListByUserId(userId));
         model.addAttribute("credentialList", this.credentialService.getUserCredentialListByUserId(userId));

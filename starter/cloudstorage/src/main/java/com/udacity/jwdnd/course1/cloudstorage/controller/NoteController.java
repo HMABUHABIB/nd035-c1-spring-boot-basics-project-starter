@@ -27,7 +27,7 @@ public class NoteController {
             this.noteService.updateNote(userNote);
         }
         else {
-            int userId = this.userService.getUser(authentication.getName()).getUserId();
+            int userId = this.userService.getUserIdFromUserName(authentication.getName());
             userNote.setUserId(userId);
             this.noteService.addNote(userNote);
         }
@@ -37,7 +37,7 @@ public class NoteController {
 
     @GetMapping("/delete/{noteId}")
     public String deleteNote(Authentication authentication, @PathVariable Integer noteId, Model model) {
-        Integer userId = userService.getUser(authentication.getName()).getUserId();
+        Integer userId = this.userService.getUserIdFromUserName(authentication.getName());
         Boolean updateResult = noteService.deleteNote(userId, noteId);
         model.addAttribute("successfulResult", updateResult);
         return "result";

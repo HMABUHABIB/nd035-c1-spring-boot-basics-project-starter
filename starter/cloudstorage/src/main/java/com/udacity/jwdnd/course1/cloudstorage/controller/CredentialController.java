@@ -27,7 +27,7 @@ public class CredentialController {
             this.credentialService.updateCredential(userCredential);
         }
         else {
-            int userId = this.userService.getUser(authentication.getName()).getUserId();
+            int userId = this.userService.getUserIdFromUserName(authentication.getName());
             userCredential.setUserId(userId);
             this.credentialService.addCredential(userCredential);
         }
@@ -37,7 +37,7 @@ public class CredentialController {
 
     @GetMapping("/delete/{credentialId}")
     public String deleteCredential(Authentication authentication, @PathVariable Integer credentialId, Model model) {
-        Integer userId = userService.getUser(authentication.getName()).getUserId();
+        Integer userId = this.userService.getUserIdFromUserName(authentication.getName());
         Boolean updateResult = credentialService.deleteCredential(userId, credentialId);
         model.addAttribute("successfulResult", updateResult);
         return "result";
