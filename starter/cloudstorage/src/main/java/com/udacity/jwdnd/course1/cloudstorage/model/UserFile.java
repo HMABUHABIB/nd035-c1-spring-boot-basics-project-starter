@@ -8,7 +8,16 @@ public class UserFile {
     private String contentType;
     private String fileSize;
     private Integer userId;
-    private InputStream fileData;
+    private byte[] fileData;
+
+    public UserFile(Integer fileId, String fileName, String contentType, String fileSize, Integer userId, byte[] fileData) {
+        this.fileId = fileId;
+        this.fileName = fileName;
+        this.contentType = contentType;
+        this.fileSize = fileSize;
+        this.userId = userId;
+        this.fileData = fileData;
+    }
 
     public Integer getFileId() {
         return fileId;
@@ -50,11 +59,11 @@ public class UserFile {
         this.userId = userId;
     }
 
-    public InputStream getFileData() {
+    public byte[] getFileData() {
         return fileData;
     }
 
-    public void setFileData(InputStream fileData) {
+    public void setFileData(byte[] fileData) {
         this.fileData = fileData;
     }
 }
