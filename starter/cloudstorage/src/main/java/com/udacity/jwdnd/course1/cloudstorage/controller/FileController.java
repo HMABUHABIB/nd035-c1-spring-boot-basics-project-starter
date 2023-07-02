@@ -24,21 +24,27 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public String postNewNote(Authentication authentication, @RequestParam("fileUpload") MultipartFile multipartFile, Model model) {
-        int userId = this.userService.getUserIdFromUserName(authentication.getName());
-        UserFile userFile = fileService.createNewUserFile(multipartFile, userId);
-        if (userFile.getFileName().isEmpty()) {
-            model.addAttribute("successfulResult", Boolean.FALSE);
-            model.addAttribute("errorInfo", "File name can't be empty");
-            return "result";
-        }
-        if (this.fileService.gerUserFileByFileName(userFile.getFileName(), userId) != null) {
-            model.addAttribute("successfulResult", Boolean.FALSE);
-            model.addAttribute("errorInfo", "You can't upload the same file name");
-        } else {
-        this.fileService.addUserFile(userFile);
-        model.addAttribute("successfulResult", Boolean.TRUE);
-        }
+    public String addNewFile(Authentication authentication, @RequestParam("fileUpload") MultipartFile multipartFile, Model model){
+
+            int userId = this.userService.getUserIdFromUserName(authentication.getName());
+            if (multipartFile.getSize() > 5242880){
+                model.addAttribute("successfulResult", Boolean.FALSE);
+                model.addAttribute("successfulResultInfo", "The file is very big");
+                return "result";
+            }
+                UserFile userFile = fileService.createNewUserFile(multipartFile, userId);
+            if (userFile.getFileName().isEmpty()) {
+                model.addAttribute("successfulResult", Boolean.FALSE);
+                model.addAttribute("successfulResultInfo", "File name can't be empty");
+                return "result";
+            }
+            if (this.fileService.gerUserFileByFileName(userFile.getFileName(), userId) != null) {
+                model.addAttribute("successfulResult", Boolean.FALSE);
+                model.addAttribute("successfulResultInfo", "You can't upload the same file name");
+            } else {
+                this.fileService.addUserFile(userFile);
+                model.addAttribute("successfulResult", Boolean.TRUE);
+            }
         return "result";
     }
 
