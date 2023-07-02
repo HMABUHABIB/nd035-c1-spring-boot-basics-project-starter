@@ -3,7 +3,6 @@ package com.udacity.jwdnd.course1.cloudstorage;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -200,6 +199,17 @@ class CloudStorageApplicationTests {
 
 	}
 
-
+	@Test
+	public void testHomePageIsNotAccessibleAfterLogOut(){
+		// Create a test account
+		doMockSignUp("First name 1","Last name 1","UserName1","123");
+		doLogIn("UserName1", "123");
+		driver.get("http://localhost:" + this.port + "/home");
+		Assertions.assertTrue(driver.getPageSource().contains("Logged in as:"));
+		WebElement logoutButton = driver.findElement(By.id("logout-button"));
+		logoutButton.click();
+		driver.get("http://localhost:" + this.port + "/home");
+		Assertions.assertFalse(driver.getPageSource().contains("Logged in as:"));
+	}
 
 }
