@@ -23,6 +23,10 @@ public class NoteService {
         return noteMapper.getNotes(userId);
     }
 
+    public Boolean checkIfSameNoteWithTitleAndDescription(UserNote userNote) {
+        return noteMapper.getNoteByTitleAndDescription(userNote) != null;
+    }
+
     public Boolean deleteNote(Integer userId, Integer noteId) {
         if (noteMapper.getNote(noteId) != null &&
                 noteMapper.getNote(noteId).getUserId().equals(userId)) {

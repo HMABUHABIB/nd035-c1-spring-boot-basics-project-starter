@@ -29,6 +29,11 @@ public class NoteController {
         else {
             int userId = this.userService.getUserIdFromUserName(authentication.getName());
             userNote.setUserId(userId);
+            if (this.noteService.checkIfSameNoteWithTitleAndDescription(userNote)) {
+                model.addAttribute("successfulResult", Boolean.FALSE);
+                model.addAttribute("successfulResultInfo", "The value for the new note is duplicate values");
+                return "result";
+            }
             this.noteService.addNote(userNote);
         }
         model.addAttribute("successfulResult", Boolean.TRUE);
