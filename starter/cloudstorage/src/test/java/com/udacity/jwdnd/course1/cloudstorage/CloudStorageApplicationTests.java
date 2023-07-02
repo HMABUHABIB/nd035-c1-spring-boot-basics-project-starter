@@ -118,6 +118,44 @@ class CloudStorageApplicationTests {
 
 	}
 
+	private void clickElementById(WebDriverWait webDriverWait, String elementId) {
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id(elementId)));
+		WebElement element = driver.findElement(By.id(elementId));
+		element.click();
+	}
+
+	private void fillTextInElement(WebDriverWait webDriverWait, String textFieldId, String text) {
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id(textFieldId)));
+		WebElement fileSelectButton = driver.findElement(By.id(textFieldId));
+		fileSelectButton.sendKeys(text);
+	}
+
+	private void cleanUpTextElement(WebDriverWait webDriverWait, String textFieldId) {
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id(textFieldId)));
+		WebElement fileSelectButton = driver.findElement(By.id(textFieldId));
+		fileSelectButton.clear();
+	}
+
+	private void createNewNote(WebDriverWait webDriverWait, String newNoteTitle, String newNoteDes) {
+		driver.get("http://localhost:" + this.port + "/home");
+
+		clickElementById(webDriverWait,"nav-notes-tab");
+
+		clickElementById(webDriverWait,"add-new-note");
+
+		fillTextInElement(webDriverWait, "note-title", newNoteTitle);
+
+		fillTextInElement(webDriverWait, "note-description", newNoteDes);
+
+		clickElementById(webDriverWait,"note-save-changes");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("success")));
+		driver.get("http://localhost:" + this.port + "/home");
+
+		clickElementById(webDriverWait,"nav-notes-tab");
+	}
+
+
 	/**
 	 * PLEASE DO NOT DELETE THIS TEST. You may modify this test to work with the 
 	 * rest of your code. 
@@ -211,5 +249,89 @@ class CloudStorageApplicationTests {
 		driver.get("http://localhost:" + this.port + "/home");
 		Assertions.assertFalse(driver.getPageSource().contains("Logged in as:"));
 	}
+
+	@Test
+	public void testAddNewNote(){
+		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+
+		String newNoteTitle = "New Note Title";
+		String newNoteDes = "New note description";
+
+		doMockSignUp("testAddNewNote","testAddNewNote","testAddNewNote","testAddNewNote");
+		doLogIn("testAddNewNote", "testAddNewNote");
+
+		createNewNote(webDriverWait, newNoteTitle, newNoteDes);
+
+		Assertions.assertTrue(driver.getPageSource().contains(newNoteTitle));
+		Assertions.assertTrue(driver.getPageSource().contains(newNoteDes));
+
+	}
+
+	@Test
+	public void testEditNote(){
+		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+
+		String newNoteTitle = "New Note Title 2";
+		String newNoteDes = "New note description 2";
+		String updatedNoteTitle = "New Note Title 3";
+		String updatedNoteDes = "New note description 3";
+
+		doMockSignUp("testEditNote","testEditNote","testEditNote","testEditNote");
+		doLogIn("testEditNote", "testEditNote");
+
+		createNewNote(webDriverWait, newNoteTitle, newNoteDes);
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("edit-userNote-button")));
+		WebElement element = driver.findElements(By.id("edit-userNote-button")).get(0);
+		element.click();
+		cleanUpTextElement(webDriverWait, "note-title");
+		fillTextInElement(webDriverWait, "note-title", updatedNoteTitle);
+		cleanUpTextElement(webDriverWait, "note-description");
+		fillTextInElement(webDriverWait,"note-description",updatedNoteDes );
+
+		clickElementById(webDriverWait,"note-save-changes");
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("success")));
+		driver.get("http://localhost:" + this.port + "/home");
+
+		clickElementById(webDriverWait,"nav-notes-tab");
+
+		Assertions.assertTrue(driver.getPageSource().contains(updatedNoteTitle));
+		Assertions.assertTrue(driver.getPageSource().contains(updatedNoteDes));
+
+	}
+
+	@Test
+	public void testDeleteNote(){
+		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+
+		String noteTitle = "Random Notes 0.2";
+		String noteDes = "Random Notes 0.2";
+		String noteTitle2 = "New Device!";
+		String noteDes2 = "New Device!";
+
+		doMockSignUp("testDeleteNote","testDeleteNote","testDeleteNote","testDeleteNote");
+		doLogIn("testDeleteNote", "testDeleteNote");
+
+		createNewNote(webDriverWait, noteTitle, noteDes);
+		createNewNote(webDriverWait, noteTitle2, noteDes2);
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.className("delete-note")));
+		WebElement element = driver.findElements(By.className("delete-note")).get(0);
+		element.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("success")));
+		driver.get("http://localhost:" + this.port + "/home");
+
+		clickElementById(webDriverWait,"nav-notes-tab");
+		clickElementById(webDriverWait,"nav-notes-tab");
+
+		Assertions.assertFalse(driver.getPageSource().contains(noteTitle));
+		Assertions.assertFalse(driver.getPageSource().contains(noteDes));
+		Assertions.assertTrue(driver.getPageSource().contains(noteTitle2));
+		Assertions.assertTrue(driver.getPageSource().contains(noteDes2));
+
+	}
+
+
 
 }
