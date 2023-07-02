@@ -30,7 +30,7 @@ public class SignupController {
         String signupError = null;
 
         if (!userService.isUsernameAvailable(user.getUserName())) {
-            signupError = "The username already exists.";
+            signupError = "Username not available";
         }
 
         if (signupError == null) {
@@ -42,10 +42,10 @@ public class SignupController {
 
         if (signupError == null) {
             attributes.addFlashAttribute("signupSuccess", true);
+            return new RedirectView("/login",true);
         } else {
             attributes.addFlashAttribute("signupError", signupError);
+            return new RedirectView("/signup",true);
         }
-
-        return new RedirectView("/login",true);
     }
 }
