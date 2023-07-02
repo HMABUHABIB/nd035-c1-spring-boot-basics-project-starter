@@ -155,6 +155,27 @@ class CloudStorageApplicationTests {
 		clickElementById(webDriverWait,"nav-notes-tab");
 	}
 
+	private void createNewCredential(WebDriverWait webDriverWait, String credentialURL, String credentialUsername, String credentialPassword) {
+		driver.get("http://localhost:" + this.port + "/home");
+
+		clickElementById(webDriverWait,"nav-credentials-tab");
+
+		clickElementById(webDriverWait,"add-new-credential");
+
+		fillTextInElement(webDriverWait, "credential-url", credentialURL);
+
+		fillTextInElement(webDriverWait, "credential-username", credentialUsername);
+
+		fillTextInElement(webDriverWait, "credential-password", credentialPassword);
+
+		clickElementById(webDriverWait,"credential-save-changes");
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("success")));
+		driver.get("http://localhost:" + this.port + "/home");
+
+		clickElementById(webDriverWait,"nav-credentials-tab");
+	}
+
 
 	/**
 	 * PLEASE DO NOT DELETE THIS TEST. You may modify this test to work with the 
@@ -331,6 +352,95 @@ class CloudStorageApplicationTests {
 
 	}
 
+	@Test
+	public void testAddNewCredential(){
+		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
 
+		String credentialURL = "gmail.com";
+		String credentialUsername = "samer@gmail.com";
+		String credentialPassword = "654321asd";
+
+		doMockSignUp("testAddNewCredential","testAddNewCredential","testAddNewCredential","testAddNewCredential");
+		doLogIn("testAddNewCredential", "testAddNewCredential");
+
+		createNewCredential(webDriverWait, credentialURL, credentialUsername, credentialPassword);
+
+		Assertions.assertTrue(driver.getPageSource().contains(credentialURL));
+		Assertions.assertTrue(driver.getPageSource().contains(credentialUsername));
+
+	}
+
+	@Test
+	public void testEditCredential(){
+		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+
+		String credentialURL = "gmail.com";
+		String credentialUsername = "samer@gmail.com";
+		String credentialPassword = "654321asd";
+		String updatedCredentialURL = "gmx.com";
+		String updatedCredentialUsername = "husam@gmx.com";
+		String updatedCredentialPassword = "dsa654";
+
+		doMockSignUp("testEditCredential","testEditCredential","testEditCredential","testEditCredential");
+		doLogIn("testEditCredential", "testEditCredential");
+
+		createNewCredential(webDriverWait, credentialURL, credentialUsername, credentialPassword);
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.className("edit-credential-button")));
+		WebElement element = driver.findElements(By.className("edit-credential-button")).get(0);
+		element.click();
+		cleanUpTextElement(webDriverWait, "credential-url");
+		fillTextInElement(webDriverWait, "credential-url", updatedCredentialURL);
+		cleanUpTextElement(webDriverWait, "credential-username");
+		fillTextInElement(webDriverWait,"credential-username",updatedCredentialUsername );
+		cleanUpTextElement(webDriverWait, "credential-password");
+		fillTextInElement(webDriverWait,"credential-password",updatedCredentialPassword );
+
+		clickElementById(webDriverWait,"credential-save-changes");
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("success")));
+		driver.get("http://localhost:" + this.port + "/home");
+
+		clickElementById(webDriverWait,"nav-credentials-tab");
+
+		Assertions.assertTrue(driver.getPageSource().contains(updatedCredentialURL));
+		Assertions.assertTrue(driver.getPageSource().contains(updatedCredentialUsername));
+		Assertions.assertFalse(driver.getPageSource().contains(credentialURL));
+		Assertions.assertFalse(driver.getPageSource().contains(credentialUsername));
+
+	}
+
+	@Test
+	public void testDeleteCredential(){
+		WebDriverWait webDriverWait = new WebDriverWait(driver, 2);
+
+		String firstCredentialURL = "gmail.com";
+		String firstCredentialUsername = "samer@gmail.com";
+		String firstCredentialPassword = "654321asd";
+		String secondCredentialURL = "gmx.com";
+		String secondCredentialUsername = "husam@gmx.com";
+		String secondCredentialPassword = "dsa654";
+
+		doMockSignUp("testDeleteCredential","testDeleteCredential","testDeleteCredential","testDeleteCredential");
+		doLogIn("testDeleteCredential", "testDeleteCredential");
+
+		createNewCredential(webDriverWait, firstCredentialURL, firstCredentialUsername, firstCredentialPassword);
+		createNewCredential(webDriverWait, secondCredentialURL, secondCredentialUsername, secondCredentialPassword);
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.className("delete-credential")));
+		WebElement element = driver.findElements(By.className("delete-credential")).get(0);
+		element.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("success")));
+		driver.get("http://localhost:" + this.port + "/home");
+
+		clickElementById(webDriverWait,"nav-credentials-tab");
+		clickElementById(webDriverWait,"nav-credentials-tab");
+
+		Assertions.assertFalse(driver.getPageSource().contains(firstCredentialURL));
+		Assertions.assertFalse(driver.getPageSource().contains(firstCredentialUsername));
+		Assertions.assertTrue(driver.getPageSource().contains(secondCredentialURL));
+		Assertions.assertTrue(driver.getPageSource().contains(secondCredentialUsername));
+
+	}
 
 }
