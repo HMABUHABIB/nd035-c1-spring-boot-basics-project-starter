@@ -281,8 +281,8 @@ class CloudStorageApplicationTests {
 
 		createNewNote(webDriverWait, newNoteTitle, newNoteDes);
 
-		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("edit-userNote-button")));
-		WebElement element = driver.findElements(By.id("edit-userNote-button")).get(0);
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.className("edit-userNote-button")));
+		WebElement element = driver.findElements(By.className("edit-userNote-button")).get(0);
 		element.click();
 		cleanUpTextElement(webDriverWait, "note-title");
 		fillTextInElement(webDriverWait, "note-title", updatedNoteTitle);
@@ -322,7 +322,6 @@ class CloudStorageApplicationTests {
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("success")));
 		driver.get("http://localhost:" + this.port + "/home");
 
-		clickElementById(webDriverWait,"nav-notes-tab");
 		clickElementById(webDriverWait,"nav-notes-tab");
 
 		Assertions.assertFalse(driver.getPageSource().contains(noteTitle));
